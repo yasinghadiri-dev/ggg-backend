@@ -23,7 +23,19 @@ jobs:
           node-version: ${{ matrix.node-version }}
 
       - name: Install dependencies
-        run: npm ci
+        run: |
+          npm ci
+
+      - name: Cache node modules
+        uses: actions/cache@v4
+        with:
+          path: ~/.npm
+          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-node-
+
+      - name: Lint
+        run: npm run lint:ci
 
       - name: Run migrations (sqlite test DB)
         env:
@@ -32,8 +44,16 @@ jobs:
         run: |
           npx sequelize-cli db:migrate --config src/config/sequelize-cli.js --env test
 
-      - name: Run tests
+      - name: Run tests (with coverage)
         env:
           DB_DIALECT: sqlite
           DB_STORAGE: ./tmp/test.sqlite
-        run: npm test --silent
+        run: |
+          npm run test:coverage --silent
+
+      - name: Upload coverage
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage-report
+          path: coverage

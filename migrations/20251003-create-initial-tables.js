@@ -21,7 +21,7 @@ module.exports = {
       last_login: { type: Sequelize.DATE },
       fcm_token: { type: Sequelize.TEXT },
       settings: { type: Sequelize.JSON },
-  status: { type: Sequelize.STRING, defaultValue: 'active' },
+        status: { type: Sequelize.STRING, defaultValue: 'active' },
   created_at: { type: Sequelize.DATE, allowNull: false },
   updated_at: { type: Sequelize.DATE, allowNull: false }
     });
@@ -113,7 +113,7 @@ module.exports = {
     });
   },
 
-  async down(queryInterface, Sequelize) {
+  async down(queryInterface, _Sequelize) {
     await queryInterface.dropTable('device_infos');
     await queryInterface.dropTable('consent_logs');
     await queryInterface.dropTable('events');
