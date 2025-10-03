@@ -9,7 +9,10 @@ function runMigrations() {
   // remove existing to ensure clean slate
   try { if (fs.existsSync(dbFile)) fs.unlinkSync(dbFile); } catch (e) { /* ignore */ }
 
-  const sequelizeCli = path.resolve(__dirname, '../node_modules/.bin/sequelize-cli.cmd');
+  // Resolve sequelize-cli binary inside backend/node_modules/.bin
+  // Use the .cmd wrapper on Windows, otherwise use the unix executable name
+  const binName = process.platform === 'win32' ? 'sequelize-cli.cmd' : 'sequelize-cli';
+  const sequelizeCli = path.resolve(__dirname, '../node_modules/.bin', binName);
   const configPath = path.resolve(__dirname, '../src/config/sequelize-cli.js');
 
   // Run migrations with DB_STORAGE pointing to our sqlite file
